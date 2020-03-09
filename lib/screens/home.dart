@@ -4,6 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../components/keys_row.dart';
 import '../components/input_key.dart';
+import '../blocs/theme.dart';
+import 'package:provider/provider.dart';
+import '../utilities/constants.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -11,12 +14,16 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  double entry = 0.0;
-
+  String output = '0';
+  double number2 = 0;
+  double number1 = 0;
+  double result = 0;
   bool isDark = false;
 
   @override
   Widget build(BuildContext context) {
+    ThemeChanger _themeChanger = Provider.of<ThemeChanger>(context);
+
     return CupertinoPageScaffold(
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 25, horizontal: 15),
@@ -25,34 +32,55 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Icon(FontAwesomeIcons.sun, color: Colors.black),
+                Icon(FontAwesomeIcons.sun, color: Colors.grey),
                 CupertinoSwitch(
                   value: isDark,
                   onChanged: (value) {
                     setState(() {
                       isDark = !isDark;
-                      value = isDark;
+                      isDark
+                          ? _themeChanger.setTheme(kDarkTheme)
+                          : _themeChanger.setTheme(kLightTheme);
                     });
                   },
-                  activeColor: Colors.red,
+                  activeColor: kShiningGreen,
                 ),
-                Icon(FontAwesomeIcons.moon, color: Colors.black),
+                Icon(FontAwesomeIcons.moon, color: Colors.grey),
               ],
             ),
             Expanded(
-              child: Container(
-                width: double.infinity,
-                child: Text(
-                  '$entry',
-                  style: GoogleFonts.sourceCodePro(
-                    textStyle: Theme.of(context)
-                        .textTheme
-                        .display3
-                        .copyWith(color: Colors.black),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    width: double.infinity,
+                    child: Text(
+                      output,
+                      style: GoogleFonts.sourceCodePro(
+                        textStyle: TextStyle(
+                          fontSize: 55,
+                          color: Colors.blueGrey,
+                        ),
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
                   ),
-                ),
+                  Container(
+                    width: double.infinity,
+                    child: Text(
+                      output,
+                      style: GoogleFonts.sourceCodePro(
+                        textStyle: TextStyle(
+                          fontSize: 75,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -67,13 +95,22 @@ class _HomeState extends State<Home> {
                     child3: '%',
                     child4: '/',
                     onPressedChild1: () {
-                      print('clean');
+                      setState(() {
+                        result = 0;
+                        output = result.toString();
+                      });
                     },
                     onPressedChild2: () {
-                      print('Sign');
+                      setState(() {
+                        result *= -1;
+                        output = result.toString();
+                      });
                     },
                     onPressedChild3: () {
-                      print('Percentage');
+                      setState(() {
+                        result = result / 100;
+                        output = result.toString();
+                      });
                     },
                     onPressedChild4: () {
                       print('Division');
@@ -81,15 +118,21 @@ class _HomeState extends State<Home> {
                   ),
                   KeysRow(
                     fillColor: Colors.grey[50],
-                    child1: '1',
-                    child2: '2',
-                    child3: '3',
+                    child1: 1,
+                    child2: 2,
+                    child3: 3,
                     child4: 'X',
                     onPressedChild1: () {
-                      print('One');
+                      setState(() {
+                        result += 1;
+                        output = result.toString();
+                      });
                     },
                     onPressedChild2: () {
-                      print('Two');
+                      setState(() {
+                        result += 2;
+                        output = result.toString();
+                      });
                     },
                     onPressedChild3: () {
                       print('Three');
@@ -100,12 +143,15 @@ class _HomeState extends State<Home> {
                   ),
                   KeysRow(
                     fillColor: Colors.grey[50],
-                    child1: '4',
-                    child2: '5',
-                    child3: '6',
+                    child1: 4,
+                    child2: 5,
+                    child3: 6,
                     child4: '-',
                     onPressedChild1: () {
-                      print('Four');
+                      setState(() {
+                        result += 4;
+                        output = result.toString();
+                      });
                     },
                     onPressedChild2: () {
                       print('Five');
@@ -119,9 +165,9 @@ class _HomeState extends State<Home> {
                   ),
                   KeysRow(
                     fillColor: Colors.grey[50],
-                    child1: '7',
-                    child2: '8',
-                    child3: '9',
+                    child1: 7,
+                    child2: 8,
+                    child3: 9,
                     child4: '+',
                     onPressedChild1: () {
                       print('Seven');
@@ -157,6 +203,7 @@ class _HomeState extends State<Home> {
                                 color: Colors.black,
                               ),
                             ),
+                            textAlign: TextAlign.left,
                           ),
                           onPressed: () {
                             print('Zero');
